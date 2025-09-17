@@ -13,6 +13,14 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS outbox (
+    id SERIAL PRIMARY KEY,
+    event_type VARCHAR(100) NOT NULL,
+    payload JSONB NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    processed_at TIMESTAMP NULL
+);
+
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO replicator;
 GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO replicator;
 

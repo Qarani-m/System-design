@@ -12,3 +12,5 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE SUBSCRIPTION cqrs_sub
 CONNECTION 'host=172.17.0.2 port=5432 dbname=cqrs_write user=replicator password=repl_password'
 PUBLICATION cqrs_pub;
+
+
