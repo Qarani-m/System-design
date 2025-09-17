@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  postgres-write-1:
+    image: postgres:17
+    container_name: postgres-write-1
+    environment:
+      POSTGRES_DB: cqrs_write
+      POSTGRES_USER: writeuser
+      POSTGRES_PASSWORD: writepass
+    ports:
+      - "5438:5432" # ⚠ changed external port to avoid clashing with existing postgres-write
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_replication_slots=10"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_logical_replication_workers=4"
+    volumes:
+      - ./setup/sql/master:/docker-entrypoint-initdb.d
+
+  postgres-read-1:
+    image: postgres:17
+    container_name: postgres-read-1
+    environment:
+      POSTGRES_DB: cqrs_read
+      POSTGRES_USER: readuser
+      POSTGRES_PASSWORD: readpass
+    ports:
+      - "5439:5432" # ⚠ changed external port to avoid clashing with existing postgres-read
+    depends_on:
+      - postgres-write-1
+    volumes:
+      - ./setup/sql/replica:/docker-entrypoint-initdb.d
